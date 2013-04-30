@@ -48,22 +48,23 @@ closest d centroids vec = fst $ minimumBy (comparing (d vec . snd)) centroids
 
 -- Cluster items
 clusterize :: Distance -> [Vector Double] -> [Vector Double] -> [Int]
-clusterize d centroids datas = [c | c <- map (closest d $ zip [1..] centroids) datas]
+clusterize d datas centroids = [c | c <- map (closest d $ zip [1..] centroids) datas]
 {-# INLINE clusterize #-}
 
 
 -- KMeans naive algorithm
 kmeans :: Distance -> Int -> [Vector Double] -> ([Int], [Vector Double])
-kmeans _ 0 _ = error "Clustering with 0 cluster is impossible"
-kmeans _ _ [] = ([], [])
-kmeans _ 1 datas = (take (length datas) $ initClustering 1, datas)
-kmeans distance k datas =
-    let clustering = initClustering k -- Init the items with random cluster id
-        centroids = getCentroids k (clustering, datas) -- Init the centroids
-    in (kmeans' centroids clustering, datas)
-    where
-        kmeans' :: [Vector Double] -> [Int] -> [Int]
-        kmeans' centroids ids
-            | ids == newIds = ids
-            | otherwise     = kmeans' (getCentroids k (ids, datas)) newIds
-            where newIds = clusterize distance centroids datas
+kmeans distance k datas
+    | k == 0        = error "Clustering with 0 cluster is impossible"
+    | datas == []   = ([], [])
+    | k == 1        = (take (length datas) $ initClustering 1, datas)
+    | otherwise     =
+        let clusters = initClustering k -- Init the items with random cluster id
+            centroids = getCentroids k (clusters, datas) -- Init the centroids
+        in (kmeans' centroids clusters, datas)
+        where
+            kmeans' :: [Vector Double] -> [Int] -> [Int]
+            kmeans' centroids ids
+                | ids == newIds = ids
+                | otherwise     = kmeans' (getCentroids k (ids, datas)) newIds
+                where newIds = clusterize distance datas centroids

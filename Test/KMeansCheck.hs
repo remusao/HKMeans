@@ -19,7 +19,7 @@ edistance :: Vector Double -> Vector Double -> Double
 edistance d1 d2 = norm1 (d1 - d2)
 
 
-
+{-
 main :: IO ()
 main = let datas = (map fromList [[1], [3], [5], [42], [43], [44], [100], [105]]) in
     do
@@ -30,10 +30,10 @@ main = let datas = (map fromList [[1], [3], [5], [42], [43], [44], [100], [105]]
         test 5 datas
     where
         test k datas = print $ kmeans edistance k datas
-
+-}
 -- Benchmarking my 'kmeans-vector' package
 
-{-
+
 main :: IO ()
 main = do
   [dimension, nb, k] <- getArgs
@@ -49,4 +49,3 @@ main = do
 generateVecs :: Int -> Int -> IO [Vector Double]
 generateVecs nb d = do
   replicateM nb (fromList `fmap` replicateM d (randomRIO (-10, 10)))
--}
