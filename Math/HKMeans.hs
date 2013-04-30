@@ -14,8 +14,8 @@ initClustering k = cycle [1..k]
 
 -- Compute the centroids of each cluster
 getCentroids :: ([Int], [Vector Double]) -> [Vector Double]
-getCentroids (ids, vectors) =
-    let items = zip ids vectors -- Convert from ([], []) to [(,)]
+getCentroids (clusterIds, vectors) =
+    let items = zip clusterIds vectors -- Convert from ([], []) to [(,)]
         sorted = sortBy (comparing fst) items -- Sort by cluster id
         grouped = groupBy (\a b -> fst a == fst b) sorted -- Group by cluster id
     in map (\l -> (sum . map snd $ l) / (fromIntegral $ length l)) grouped
@@ -24,10 +24,10 @@ getCentroids (ids, vectors) =
 
 -- Cluster items
 clusterize :: Distance -> [Vector Double] -> [(Int, Vector Double)] -> [Int]
-clusterize d datas centroids = [c | c <- map closest datas]
+clusterize distance datas centroids = [c | c <- map closest datas]
     where
         closest :: Vector Double -> Int
-        closest vec = fst $ minimumBy (comparing (d vec . snd)) centroids
+        closest vector = fst $ minimumBy (comparing (distance vector . snd)) centroids
 {-# INLINE clusterize #-}
 
 
@@ -38,12 +38,12 @@ kmeans distance k datas
     | datas == []   = ([], [])
     | k == 1        = (take (length datas) $ initClustering 1, datas)
     | otherwise     =
-        let clusters = initClustering k -- Init the items with random cluster id
-            centroids = getCentroids (clusters, datas) -- Init the centroids
-        in (kmeans' centroids clusters, datas)
+        let initialClusters = initClustering k -- Init the items with random cluster id
+            centroids = getCentroids (initialClusters, datas) -- Init the centroids
+        in (kmeans' centroids initialClusters, datas)
         where
             kmeans' :: [Vector Double] -> [Int] -> [Int]
-            kmeans' centroids ids
-                | ids == newIds = ids
-                | otherwise     = kmeans' (getCentroids (ids, datas)) newIds
+            kmeans' centroids clusterIds
+                | clusterIds == newIds = clusterIds
+                | otherwise     = kmeans' (getCentroids (clusterIds, datas)) newIds
                 where newIds = clusterize distance datas $ zip [1..] centroids
