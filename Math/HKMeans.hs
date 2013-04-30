@@ -1,19 +1,7 @@
 module Math.HKMeans(kmeans) where
 
-import Prelude hiding
-    (all,
-    cycle,
-    head,
-    iterate,
-    last,
-    length,
-    map,
-    sum,
-    take,
-    zip,
-    (++))
 import Numeric.LinearAlgebra
-import Data.List.Stream
+import Data.List
 import Data.Ord
 
 type Distance = (Vector Double -> Vector Double -> Double)
@@ -34,15 +22,12 @@ getCentroids (ids, vectors) =
 {-# INLINE getCentroids #-}
 
 
--- Return the closest Centroid from the given vector
-closest :: Distance -> [(Int, Vector Double)] -> Vector Double -> Int
-closest d centroids vec = fst $ minimumBy (comparing (d vec . snd)) centroids
-{-# INLINE closest #-}
-
-
 -- Cluster items
-clusterize :: Distance -> [Vector Double] -> [Vector Double] -> [Int]
-clusterize d datas centroids = [c | c <- map (closest d $ zip [1..] centroids) datas]
+clusterize :: Distance -> [Vector Double] -> [(Int, Vector Double)] -> [Int]
+clusterize d datas centroids = [c | c <- map closest datas]
+    where
+        closest :: Vector Double -> Int
+        closest vec = fst $ minimumBy (comparing (d vec . snd)) centroids
 {-# INLINE clusterize #-}
 
 
@@ -61,4 +46,4 @@ kmeans distance k datas
             kmeans' centroids ids
                 | ids == newIds = ids
                 | otherwise     = kmeans' (getCentroids (ids, datas)) newIds
-                where newIds = clusterize distance datas centroids
+                where newIds = clusterize distance datas $ zip [1..] centroids
