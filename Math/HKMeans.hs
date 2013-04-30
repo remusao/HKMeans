@@ -25,19 +25,13 @@ initClustering k = cycle [1..k]
 
 
 -- Compute the centroids of each cluster
-getCentroids :: Int -> ([Int], [Vector Double]) -> [Vector Double]
-getCentroids k (ids, vectors) = let items = zip ids vectors in map (getCentroid items) [1..k]
-    where
-        -- Sum the vectors that have the same cluster id and divide the sum to get the mean
-        getCentroid ::  [(Int, Vector Double)] -> Int -> Vector Double
-        getCentroid items cid = let (acc, s) = sumVectors items cid
-            in s / fromIntegral acc
-        -- Sum the vectors that are in the cluster `cid`
-        sumVectors :: [(Int, Vector Double)] -> Int -> (Int, Vector Double)
-        sumVectors [] _ = (0, 0)
-        sumVectors ((c, vec):t) cid
-            | c == cid   = let (acc, v) = sumVectors t cid in (acc + 1, v + vec)
-            | otherwise = sumVectors t cid
+getCentroids :: ([Int], [Vector Double]) -> [Vector Double]
+getCentroids (ids, vectors) =
+    let items = zip ids vectors -- Convert from ([], []) to [(,)]
+        sorted = sortBy (comparing fst) items -- Sort by cluster id
+        grouped = groupBy (\a b -> fst a == fst b) sorted -- Group by cluster id
+    in map (\l -> (sum . map snd $ l) / (fromIntegral $ length l)) grouped
+{-# INLINE getCentroids #-}
 
 
 -- Return the closest Centroid from the given vector
@@ -60,11 +54,11 @@ kmeans distance k datas
     | k == 1        = (take (length datas) $ initClustering 1, datas)
     | otherwise     =
         let clusters = initClustering k -- Init the items with random cluster id
-            centroids = getCentroids k (clusters, datas) -- Init the centroids
+            centroids = getCentroids (clusters, datas) -- Init the centroids
         in (kmeans' centroids clusters, datas)
         where
             kmeans' :: [Vector Double] -> [Int] -> [Int]
             kmeans' centroids ids
                 | ids == newIds = ids
-                | otherwise     = kmeans' (getCentroids k (ids, datas)) newIds
+                | otherwise     = kmeans' (getCentroids (ids, datas)) newIds
                 where newIds = clusterize distance datas centroids
