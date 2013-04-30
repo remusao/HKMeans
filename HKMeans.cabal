@@ -12,7 +12,7 @@ cabal-version:       >=1.8
 
 library
     exposed-modules: Math.HKMeans
-    Build-Depends:   base, hmatrix
+    Build-Depends:   base
     ghc-options:     -Wall -O2
 
 Executable KMeansCheck
