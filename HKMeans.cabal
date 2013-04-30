@@ -1,0 +1,22 @@
+name:                hkmeans
+version:             0.1
+synopsis:            A naïve, still efficient, implementation of the KMeans algorithm
+description:         A naïve, still efficient, implementation of the KMeans algorithm
+license:             GPL-2
+license-file:        LICENSE
+author:              Rémi Berson
+maintainer:          remi.berson@gmail.com
+category:            Math
+build-type:          Simple
+cabal-version:       >=1.8
+
+library
+    exposed-modules: Math.HKMeans
+    Build-Depends:   base, hmatrix, stream-fusion
+    ghc-options:     -Wall -O2
+
+Executable KMeansCheck
+    Build-Depends:  base, hkmeans, hmatrix, random
+    hs-source-dirs: Test
+    Main-is:        KMeansCheck.hs
+    ghc-options:    -Wall -O2
