@@ -16,7 +16,7 @@ library
     ghc-options:     -Wall -O2
 
 Executable KMeansCheck
-    Build-Depends:  base, hkmeans, hmatrix, random
+    Build-Depends:  base, hkmeans, hmatrix, random, MissingH
     hs-source-dirs: Test
     Main-is:        KMeansCheck.hs
     ghc-options:    -Wall -O2
