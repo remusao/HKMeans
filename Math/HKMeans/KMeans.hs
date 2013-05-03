@@ -1,4 +1,4 @@
-module Math.HKMeans.KMeans(kmeans, clusterize, getCentroids) where
+module Math.HKMeans.KMeans(kmeans) where
 
 import Data.List
 import Data.Ord
