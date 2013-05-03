@@ -1,4 +1,4 @@
-name:                hkmeans
+name:                hkmean
 version:             0.1
 synopsis:            A naïve, still efficient, implementation of the KMeans algorithm
 description:         A naïve, still efficient, implementation of the KMeans algorithm
@@ -6,14 +6,13 @@ license:             GPL-2
 license-file:        LICENSE
 author:              Rémi Berson
 maintainer:          remi.berson@gmail.com
-category:            Math
 build-type:          Simple
 cabal-version:       >=1.8
 
 library
-    exposed-modules: Math.HKMeans
-    Build-Depends:   base
-    ghc-options:     -Wall -O2
+    exposed-modules:    Math.HKMeans.KMeans
+    Build-Depends:      base, hmatrix, array
+    ghc-options:        -Wall -O2
 
 Executable KMeansCheck
     Build-Depends:  base, hkmeans, hmatrix, random, MissingH

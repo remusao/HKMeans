@@ -1,4 +1,4 @@
-module Math.HKMeans(kmeans) where
+module Math.HKMeans.KMeans(kmeans, clusterize, getCentroids) where
 
 import Data.List
 import Data.Ord
@@ -14,10 +14,10 @@ initClustering k = cycle [1..k]
 -- Compute the centroids of each cluster
 getCentroids :: (Num a, Fractional a) => ([Int], [a]) -> [a]
 getCentroids (clusterIds, vectors) =
-    let items = zip clusterIds vectors -- Convert from ([], []) to [(,)]
-        sorted = sortBy (comparing fst) items -- Sort by cluster id
-        grouped = groupBy (\a b -> fst a == fst b) sorted -- Group by cluster id
-    in map (\l -> (sum . map snd $ l) / (fromIntegral $ length l)) grouped
+    map (\l -> (sum . map snd $ l) / (fromIntegral $ length l))
+    . groupBy (\a b -> fst a == fst b) -- Group by cluster id
+    . sortBy (comparing fst) -- Sort by cluster id
+    . zip clusterIds $ vectors -- Convert from ([], []) to [(,)]
 {-# INLINE getCentroids #-}
 
 

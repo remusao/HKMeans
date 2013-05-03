@@ -1,7 +1,7 @@
 
 module Main where
 
-import Math.HKMeans
+import Math.HKMeans.KMeans
 
 import Data.List
 import Data.Ord
@@ -11,6 +11,7 @@ import System.Random
 import Data.Packed.Vector
 import Numeric.LinearAlgebra
 import qualified Data.String.Utils as S
+
 
 -- Displays the usage
 usage :: IO ()
