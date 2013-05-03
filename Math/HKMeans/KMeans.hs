@@ -30,15 +30,15 @@ clusterize distance datas centroids = [c | c <- map closest datas]
 
 
 -- KMeans naive algorithm
-kmeans :: (Eq a, Fractional a, Num a) => Distance a -> Int -> [a] -> ([Int], [a])
+kmeans :: (Eq a, Fractional a, Num a) => Distance a -> Int -> [a] -> [Int]
 kmeans distance k datas
     | k == 0        = error "Clustering with 0 cluster is impossible"
-    | datas == []   = ([], [])
-    | k == 1        = (take (length datas) $ initClustering 1, datas)
+    | datas == []   = []
+    | k == 1        = replicate (length datas) 1
     | otherwise     =
         let initialClusters = initClustering k -- Init the items with random cluster id
             centroids = getCentroids (initialClusters, datas) -- Init the centroids
-        in (kmeans' centroids initialClusters, datas)
+        in kmeans' centroids initialClusters
         where
             kmeans' centroids clusterIds
                 | clusterIds == newIds = clusterIds

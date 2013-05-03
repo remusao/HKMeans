@@ -60,7 +60,7 @@ runNormal =
         test k datas =
             do
                 putStrLn $ "New Check (k = " ++ (show k) ++ ")"
-                printClustering $ kmeans edistance k datas
+                printClustering $ (kmeans edistance k datas, datas)
 
 
 -- Generate n random d-dimentional vectors and then run the clustering with k cluster
@@ -69,7 +69,7 @@ runPerf (_dim:_nb:_k:[]) =
     let (d, n, k) = (read _dim :: Int, read _nb :: Int, read _k :: Int) in
     do
         vectors <- generateVecs n d
-        let cls = kmeans edistance k vectors
+        let cls = zip (kmeans edistance k vectors) vectors
         putStrLn . show $ cls
 runPerf _ = error "Incorrect arguments"
 
